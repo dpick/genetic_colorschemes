@@ -2,10 +2,12 @@ require 'pp'
 
 HEX_VALUES = { 10 => 'A', 11 => 'B', 12 => 'C', 13 => 'D', 14 => 'E', 15 => 'F' }
 
-VALUES = ["Boolean", "Character"]
+VALUES = ["Boolean", "Character", "Number", "String"]
 
 GOAL = { "Boolean" => "AE81FF",
-         "Character" => "E6DB74"}
+         "Character" => "E6DB74",
+         "Number" => "AE81FF",
+         "String" => "E6DB74" }
 
 def random_hex_digit
   rand_num = rand(15) + 1
@@ -108,7 +110,7 @@ def search(pop_size, p_crossover, p_mutation)
   population.sort! { |x, y| y[:fitness] <=> x[:fitness] }
   best = population.first
 
-  10000.times do
+  1000.times do
     selected = Array.new(pop_size) { |i| binary_tournament(population) }
     children = reproduce(selected, pop_size, p_crossover, p_mutation)
     children.each { |child| child[:fitness] = fitness(child) }
