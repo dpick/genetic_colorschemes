@@ -18,7 +18,7 @@ end
 def random_hex_value
   hex_string = ""
 
-  0.upto(6).each do |i|
+  1.upto(6).each do |i|
     hex_string << random_hex_digit
   end
 
@@ -28,7 +28,7 @@ end
 def hex_distance(value_1, value_2)
   sum = 0
   value_1.split("").each_index do |i|
-    sum += 1 if value_1[i] == value_2[i]
+    sum += i if value_1[i] == value_2[i]
   end
 
   sum
@@ -90,7 +90,7 @@ end
 def reproduce(selected, pop_size, p_cross, p_mutation)
   children = []
   selected.each_with_index do |p1, i|
-    p2 = (i.modulo(2)==0) ? selected[i+1] : selected[i-1]
+    p2 = (i % 2 == 0) ? selected[i+1] : selected[i-1]
     p2 = selected[0] if i == selected.size-1
     child = {}
     child = crossover(p1, p2, p_cross)
@@ -105,18 +105,16 @@ end
 def search(pop_size, p_crossover, p_mutation)
   population = initialize_pop(pop_size, p_crossover, p_mutation)
   population.each { |pop| pop[:fitness] = fitness(pop) }
-  population.sort! { |x, y| x[:fitness] <=> y[:fitness] }
+  population.sort! { |x, y| y[:fitness] <=> x[:fitness] }
   best = population.first
 
-  10.times do
+  10000.times do
     selected = Array.new(pop_size) { |i| binary_tournament(population) }
     children = reproduce(selected, pop_size, p_crossover, p_mutation)
     children.each { |child| child[:fitness] = fitness(child) }
-    children.sort! { |x, y| x[:fitness] <=> y[:fitness] }
-    pp children
-    best = children.first if children.first[:fitness] >= best[:fitness]
+    children.sort! { |x, y| y[:fitness] <=> x[:fitness] }
+    best = children.first.clone if children.first[:fitness] >= best[:fitness]
     population = children
-    puts "Best fitness is #{best[:fitness]}"
   end
 
   return best
